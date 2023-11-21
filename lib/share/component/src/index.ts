@@ -9,3 +9,5 @@ export * from './lib/tabs';
 export * from './lib/card-article';
 export * from './lib/tag';
 export * from './lib/popup';
+export * from './lib/banner';
+export * from './lib/card-thumbnail';

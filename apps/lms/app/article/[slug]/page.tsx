@@ -2,8 +2,8 @@
 
 import { useState } from 'react';
 import Image from 'next/image';
-import { useQuery } from '@tanstack/react-query';
-import { Tag, Popup } from '@final/component';
+import { useQuery, keepPreviousData } from '@tanstack/react-query';
+import { Tag, Popup, Banner, CardThumbnail } from '@final/component';
 import { api } from '../../../config/api';
 import shimmer, { toBase64 } from '../../../utils/shimmer';
 
@@ -19,11 +19,33 @@ const ArticlePage = ({ params }: { params: { slug: string } }) => {
     queryFn: () => fetchArticle(params.slug),
   });
 
+  // other articles
+  const fetchOtherArticles = async (page: number) => {
+    const response = await api.get(
+      `/article/filter?page=${page}&limit=7&sort_by=TITLE&search=`
+    );
+    return response.data.data;
+  };
+
+  const filterOtherArticles = (data: any) => {
+    console.log(data);
+    return data.data.filter((article: any) => article.slug !== params.slug);
+  };
+
+  const otherArticles = useQuery({
+    queryKey: ['other-articles', 1],
+    queryFn: () => fetchOtherArticles(1),
+    placeholderData: keepPreviousData,
+    select: filterOtherArticles,
+  });
+
   if (article.isLoading) return <div>Loading...</div>;
+
+  if (otherArticles.isLoading) return <div>Loading...</div>;
   if (article.isError) return <div>{article.error.message}</div>;
   return (
-    <div className="flex flex-col w-full h-full py-8 ">
-      <div className="grid md:grid-cols-3 gap-8">
+    <div className="flex flex-col w-full h-full py-8 justify-center">
+      <div className="grid md:grid-cols-3 grid-cols-1 md:gap-8 gap-4">
         <div className="col-start-1 col-end-3 ">
           <div className="flex flex-col space-y-5">
             <h1 className="font-bold text-[36px] max-w-2xl break-words leading-[46px] ">
@@ -81,17 +103,34 @@ const ArticlePage = ({ params }: { params: { slug: string } }) => {
                 placeholder="blur"
               />
               <p className="leading-loose">{article.data.content}</p>
-              {/* <br />
-              <p className="leading-loose">
-                {article.data.content.replace(/(\.(\s+))/g, `$1 ${(<br />)}`)}
-                {article.data.content.replace(/(?:\r\n|\r|\n)/g, '<br>')}
-              </p> */}
             </div>
           </div>
         </div>
-        <div className="flex flex-col space-y-5 bg-orange-300">
-          <img src="/images/home.svg" />
-          <h1>lainnya dari sekilas ilmu</h1>
+        <div className="flex flex-col w-full h-full space-y-8 items-center justify-center">
+          <Banner
+            text="Fakta Unik Negara Jepang yang Mungkin Belum Kamu Ketahui!"
+            imgUrl="https://images.unsplash.com/photo-1493780474015-ba834fd0ce2f?q=80&w=2042&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+          />
+
+          <div className="flex flex-col w-full h-full">
+            <div>
+              <h1 className="text-2xl font-bold capitalize leading-[2rem]">
+                lainnya dari sekilas ilmu
+              </h1>
+              <hr className="border-[#0B568D] border-2 w-24" />
+            </div>
+
+            {otherArticles.data.map((article: any, idx: number) => (
+              <CardThumbnail
+                key={idx}
+                date={article.created_at}
+                slug={article.slug}
+                title={article.title}
+                tag={article.tags[0]}
+                image={article.thumbnail}
+              />
+            ))}
+          </div>
         </div>
       </div>
     </div>

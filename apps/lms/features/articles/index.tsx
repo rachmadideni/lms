@@ -11,8 +11,6 @@ const Articles = () => {
   const [searchKeyword, setSearchKeyword] = useState<string>('');
 
   const fetchArticles = async (page: number) => {
-    // /article/filter?page=1&limit=5&sort_by=TITLE&search=Ayo
-
     const response = await api.get(
       `/article/filter?page=${page}&limit=8&sort_by=TITLE&search=${searchKeyword}`
     );
@@ -40,7 +38,7 @@ const Articles = () => {
         onChange={handleTabChange}
       />
 
-      <div className="grid md:grid-cols-4 gap-8 auto-cols-max w-full p-8">
+      <div className="grid md:grid-cols-4 grid-cols-1 gap-8 md:auto-cols-max md:w-full md:p-8">
         {activeTab === 0 && (
           <>
             {articles?.data.data.map((article: ICardArticle, idx: number) => (
@@ -61,7 +59,5 @@ const Articles = () => {
     </>
   );
 };
-
-// "https://res.cloudinary.com/dz5pv99lp/image/upload/v1699008675/articles/e7b30195-a59c-4d53-9eaf-fa95efdb9539/articles_921baba1-2a0e-483f-9edb-f679a9ae7519.png
 
 export default Articles;

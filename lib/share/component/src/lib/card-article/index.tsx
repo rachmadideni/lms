@@ -26,7 +26,7 @@ export const CardArticle = ({
   //   (await 'bg-[#') + Math.floor(Math.random() * 16777215).toString(16) + ']';
 
   return (
-    <div className="flex flex-col space-y-4 w-max md:w-[300px] bg-white p-4 border border-gray-200 rounded-lg">
+    <div className="flex flex-col space-y-4  md:w-[300px] bg-white p-4 border border-gray-200 rounded-lg">
       <Image
         src={thumbnail}
         width={276}
@@ -34,17 +34,21 @@ export const CardArticle = ({
         alt="article-post-thumbnail"
         sizes="100vw, 160px"
         className="rounded-md max-h-[160px]"
+        priority
       />
       <div className="flex w-full h-8 justify-between items-center">
         <Tag text={tag} />
         <DateComponent date={date} />
       </div>
       <div className="h-20">
-        <Link className="text-[18px] font-bold" href={`/article/${slug}`}>
+        <Link
+          className="text-[18px] font-bold leading-tight"
+          href={`/article/${slug}`}
+        >
           {title}
         </Link>
       </div>
-      <div className="flex w-full justify-between">
+      <div className="flex w-full justify-between pt-4 md:pt-1">
         <p className="capitalize text-[12px]">{views} Views</p>
         <button className="text-[12px] font-bold bg-slate-100 hover:bg-slate-200/70 p-2 rounded-md hover:fill-[#106FA4]">
           <Image
