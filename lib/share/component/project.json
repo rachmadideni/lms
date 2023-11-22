@@ -1,0 +1,16 @@
+{
+  "name": "component",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "lib/share/component/src",
+  "projectType": "library",
+  "tags": [],
+  "targets": {
+    "lint": {
+      "executor": "@nx/eslint:lint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["lib/share/component/**/*.{ts,tsx,js,jsx}"]
+      }
+    }
+  }
+}
