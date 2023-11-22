@@ -3,7 +3,13 @@
 import { useState } from 'react';
 import { useRecoilState, useSetRecoilState } from 'recoil';
 import articleAtom from '../../atoms/article';
-import { Tabs, CardArticle, Search, Pagination } from '@final/component';
+import {
+  Tabs,
+  CardArticle,
+  ICardArticle,
+  Search,
+  Pagination,
+} from '@final/component';
 import { useQuery, keepPreviousData } from '@tanstack/react-query';
 import { api } from '../../config/api';
 
@@ -76,43 +82,39 @@ const Articles = () => {
         {activeTab === 0 && (
           <>
             {articles?.data.data
-              ? articles?.data.data.map(
-                  (article: ICardArticle, idx: number) => (
-                    <>
-                      <CardArticle
-                        key={idx}
-                        title={article.title}
-                        date={article.created_at}
-                        tag={article.tags ? article.tags[0] : ''}
-                        thumbnail={article.thumbnail}
-                        views={article.views}
-                        slug={article.slug}
-                        onBookmarkClick={(evt) =>
-                          handleBookmarkClick(evt, article)
-                        }
-                      />
-                    </>
-                  )
-                )
+              ? articles?.data.data.map((article: any, idx: number) => (
+                  <>
+                    <CardArticle
+                      key={idx}
+                      title={article.title}
+                      date={article.created_at}
+                      tag={article.tags ? article.tags[0] : ''}
+                      thumbnail={article.thumbnail}
+                      views={article.views}
+                      slug={article.slug}
+                      onBookmarkClick={(evt) =>
+                        handleBookmarkClick(evt, article)
+                      }
+                    />
+                  </>
+                ))
               : []}
           </>
         )}
         {activeTab === 1 && (
           <>
-            {articleState.bookmarks?.map(
-              (article: ICardArticle, idx: number) => (
-                <CardArticle
-                  key={idx}
-                  title={article.title}
-                  date={article.created_at}
-                  tag={article.tags ? article.tags[0] : ''}
-                  thumbnail={article.thumbnail}
-                  views={article.views}
-                  slug={article.slug}
-                  onBookmarkClick={(evt) => handleBookmarkClick(evt, article)}
-                />
-              )
-            )}
+            {articleState.bookmarks?.map((article: any, idx: number) => (
+              <CardArticle
+                key={idx}
+                title={article.title}
+                date={article.created_at}
+                tag={article.tags ? article.tags[0] : ''}
+                thumbnail={article.thumbnail}
+                views={article.views}
+                slug={article.slug}
+                onBookmarkClick={(evt) => handleBookmarkClick(evt, article)}
+              />
+            ))}
           </>
         )}
       </div>
