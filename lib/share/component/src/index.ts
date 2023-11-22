@@ -4,7 +4,7 @@ export { Avatar } from './lib/avatar';
 export { IconButton } from './lib/icon-button';
 export { Search } from './lib/search';
 export { Tabs } from './lib/tabs';
-export { CardArticle } from './lib/card-article';
+export { CardArticle, ICardArticle } from './lib/card-article';
 export { Tag } from './lib/tag';
 export { Banner } from './lib/banner';
 export { CardThumbnail } from './lib/card-thumbnail';
