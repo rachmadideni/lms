@@ -3,12 +3,27 @@
 import { useState } from 'react';
 import Image from 'next/image';
 import { useQuery, keepPreviousData } from '@tanstack/react-query';
-import { Tag, Popup, Banner, CardThumbnail } from '@final/component';
+import {
+  Tag,
+  Banner,
+  CardThumbnail,
+  Modal,
+  ReportDialog,
+  ReportConfirmDialog,
+} from '@final/component';
 import { api } from '../../../config/api';
 import shimmer, { toBase64 } from '../../../utils/shimmer';
+import { reports } from './constants';
 
 const ArticlePage = ({ params }: { params: { slug: string } }) => {
-  const [popupVisible, setPopupVisible] = useState(false);
+  const [reportDialogVisible, toggleReportDialogVisible] = useState(false);
+  const [reportConfirm, setReportConfirm] = useState(false);
+
+  const reportHandler = async () => {
+    toggleReportDialogVisible(false);
+    setReportConfirm(true);
+  };
+
   const fetchArticle = async (slug: string) => {
     const response = await api.get(`/article/${slug}`);
     return response.data.data;
@@ -28,7 +43,6 @@ const ArticlePage = ({ params }: { params: { slug: string } }) => {
   };
 
   const filterOtherArticles = (data: any) => {
-    console.log(data);
     return data.data.filter((article: any) => article.slug !== params.slug);
   };
 
@@ -67,10 +81,11 @@ const ArticlePage = ({ params }: { params: { slug: string } }) => {
                   />
                   share
                 </a>
+
                 <a
                   href="#"
                   className="flex p-2 text-[#EE2D24] font-bold "
-                  onClick={() => setPopupVisible((prev) => !prev)}
+                  onClick={() => toggleReportDialogVisible(true)}
                 >
                   <Image
                     src="/images/report.svg"
@@ -80,14 +95,28 @@ const ArticlePage = ({ params }: { params: { slug: string } }) => {
                   />
                   laporkan
                 </a>
-                <Popup visible={popupVisible}>
-                  <div className="flex flex-col w-full p-4 items-center">
-                    <p className="font-bold">Laporkan</p>
-                    <hr className="border-gray-200 dark:border-gray-700 "></hr>
-                    <div>Mengapa Anda melaporkan Artikel ini?</div>
-                    <hr className="border-gray-200 dark:border-gray-700 "></hr>
-                  </div>
-                </Popup>
+
+                {reportDialogVisible && (
+                  <Modal>
+                    <ReportDialog
+                      title="laporkan"
+                      subtitle="Mengapa Anda melaporkan Artikel ini?"
+                      reportList={reports}
+                      onCloseHandler={() => toggleReportDialogVisible(false)}
+                      onReportHandler={reportHandler}
+                    />
+                  </Modal>
+                )}
+
+                {reportConfirm && (
+                  <Modal>
+                    <ReportConfirmDialog
+                      textBody="Masukan dari Anda sangat penting untuk membantu kami menjaga komunitas Kampus Gratis agar tetap aman."
+                      textButton="tutup"
+                      onCloseHandler={() => setReportConfirm(false)}
+                    />
+                  </Modal>
+                )}
               </div>
             </div>
             <div className="flex flex-col w-full gap-8 px-8">

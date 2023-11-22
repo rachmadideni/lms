@@ -1,24 +1,29 @@
 'use client';
 
 import { useState } from 'react';
-import { Tabs, CardArticle } from '@final/component';
+import { useRecoilState, useSetRecoilState } from 'recoil';
+import articleAtom from '../../atoms/article';
+import { Tabs, CardArticle, Search, Pagination } from '@final/component';
 import { useQuery, keepPreviousData } from '@tanstack/react-query';
 import { api } from '../../config/api';
 
 const Articles = () => {
   const [activeTab, setActiveTab] = useState(0);
   const [currentPage, setCurrentPage] = useState<number>(1);
-  const [searchKeyword, setSearchKeyword] = useState<string>('');
+  const [postsPerPage, setPostsPerPage] = useState<number>(10);
+
+  const [articleState, setArticleState] = useRecoilState(articleAtom);
+  const setBookmarks = useSetRecoilState(articleAtom);
 
   const fetchArticles = async (page: number) => {
     const response = await api.get(
-      `/article/filter?page=${page}&limit=8&sort_by=TITLE&search=${searchKeyword}`
+      `/article/filter?page=${page}&limit=${postsPerPage}&sort_by=TITLE&search=${articleState.keyword}`
     );
     return response.data.data;
   };
 
   const articles = useQuery({
-    queryKey: ['articles', currentPage, searchKeyword],
+    queryKey: ['articles', currentPage, articleState.keyword],
     queryFn: () => fetchArticles(currentPage),
     placeholderData: keepPreviousData,
   });
@@ -27,11 +32,40 @@ const Articles = () => {
     setActiveTab(id);
   };
 
-  if (articles.isLoading) return <div>Loading...</div>;
+  const handleBookmarkClick = (evt: React.MouseEvent, val: any) => {
+    evt.preventDefault();
+    const checks = articleState.bookmarks?.some((item) => item.id === val.id);
+    if (!checks) {
+      setBookmarks((prev) => ({
+        ...prev,
+        bookmarks: [...(prev.bookmarks || []), val],
+      }));
+    }
+  };
+
+  const paginate = (pageNumber: number) => {
+    setCurrentPage(pageNumber);
+  };
+
+  console.log(articles);
+
+  if (articles.isLoading)
+    return (
+      <div className="flex flex-col w-full min-h-[100%] h-screen items-center">
+        Loading...
+      </div>
+    );
 
   if (articles.isError) return <div>{articles.error.message}</div>;
   return (
     <>
+      <Search
+        headerText="sekilas ilmu"
+        headerCaption="Temukan artikel menarik yang bakal menambah wawasanmu disini!"
+        onChange={(evt) => {
+          setArticleState({ keyword: evt.target.value });
+        }}
+      />
       <Tabs
         activeTab={activeTab}
         items={['Sekilas Ilmu', 'Disimpan']}
@@ -41,21 +75,56 @@ const Articles = () => {
       <div className="grid md:grid-cols-4 grid-cols-1 gap-8 md:auto-cols-max md:w-full md:p-8">
         {activeTab === 0 && (
           <>
-            {articles?.data.data.map((article: ICardArticle, idx: number) => (
-              <CardArticle
-                key={idx}
-                title={article.title}
-                date={article.created_at}
-                tag={article.tags ? article.tags[0] : ''}
-                thumbnail={article.thumbnail}
-                views={article.views}
-                slug={article.slug}
-              />
-            ))}
+            {articles?.data.data
+              ? articles?.data.data.map(
+                  (article: ICardArticle, idx: number) => (
+                    <>
+                      <CardArticle
+                        key={idx}
+                        title={article.title}
+                        date={article.created_at}
+                        tag={article.tags ? article.tags[0] : ''}
+                        thumbnail={article.thumbnail}
+                        views={article.views}
+                        slug={article.slug}
+                        onBookmarkClick={(evt) =>
+                          handleBookmarkClick(evt, article)
+                        }
+                      />
+                    </>
+                  )
+                )
+              : []}
           </>
         )}
-        {activeTab === 1 && <div>Tab 2</div>}
+        {activeTab === 1 && (
+          <>
+            {articleState.bookmarks?.map(
+              (article: ICardArticle, idx: number) => (
+                <CardArticle
+                  key={idx}
+                  title={article.title}
+                  date={article.created_at}
+                  tag={article.tags ? article.tags[0] : ''}
+                  thumbnail={article.thumbnail}
+                  views={article.views}
+                  slug={article.slug}
+                  onBookmarkClick={(evt) => handleBookmarkClick(evt, article)}
+                />
+              )
+            )}
+          </>
+        )}
       </div>
+
+      {activeTab === 0 && (
+        <Pagination
+          currentPage={currentPage}
+          paginate={paginate}
+          postsPerPage={postsPerPage}
+          totalPosts={articles.data.total_data}
+        />
+      )}
     </>
   );
 };

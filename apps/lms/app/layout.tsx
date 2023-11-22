@@ -1,5 +1,6 @@
 import './global.css';
 import Provider from '../config/provider';
+import RecoilProvider from '../config/recoil';
 import { Header } from '@final/component';
 export const metadata = {
   title: 'Welcome to lms',
@@ -15,10 +16,12 @@ export default function RootLayout({
     <html lang="en">
       <body>
         <Provider>
-          <div className="md:container md:mx-auto px-5 md:px-14 bg-[#FAFAFA] min:h-screen">
-            <Header />
-            {children}
-          </div>
+          <RecoilProvider>
+            <div className="md:container md:mx-auto px-5 md:px-14 bg-[#FAFAFA] min:h-screen">
+              <Header />
+              {children}
+            </div>
+          </RecoilProvider>
         </Provider>
       </body>
     </html>

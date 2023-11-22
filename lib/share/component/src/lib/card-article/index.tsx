@@ -10,6 +10,9 @@ export interface ICardArticle {
   thumbnail: string;
   views: number;
   slug: string;
+  onBookmarkClick: (
+    evt: React.MouseEvent<HTMLButtonElement, MouseEvent>
+  ) => void;
 }
 
 export interface IArticleProps extends Partial<ICardArticle> {}
@@ -21,6 +24,7 @@ export const CardArticle = ({
   thumbnail,
   views,
   slug,
+  onBookmarkClick,
 }: ICardArticle) => {
   // const getRandomColor = async (): Promise<string> =>
   //   (await 'bg-[#') + Math.floor(Math.random() * 16777215).toString(16) + ']';
@@ -50,7 +54,10 @@ export const CardArticle = ({
       </div>
       <div className="flex w-full justify-between pt-4 md:pt-1">
         <p className="capitalize text-[12px]">{views} Views</p>
-        <button className="text-[12px] font-bold bg-slate-100 hover:bg-slate-200/70 p-2 rounded-md hover:fill-[#106FA4]">
+        <button
+          onClick={onBookmarkClick}
+          className="text-[12px] font-bold bg-slate-100 hover:bg-slate-200/70 p-2 rounded-md hover:fill-[#106FA4]"
+        >
           <Image
             src="/images/bookmark.svg"
             width={14}

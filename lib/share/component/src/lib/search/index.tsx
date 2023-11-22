@@ -6,11 +6,16 @@ import { TextField } from '../textfield';
 interface ISearchProps {
   headerText: string;
   headerCaption: string;
+  onChange: (evt: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
-export const Search = ({ headerText, headerCaption }: ISearchProps) => {
+export const Search = ({
+  headerText,
+  headerCaption,
+  onChange,
+}: ISearchProps) => {
   return (
-    <div className="flex flex-col space-y-10 items-center justify-center md:px-16 py-4">
+    <div className="flex flex-col w-full space-y-10 items-center justify-center md:px-16 py-4">
       <div className="flex flex-col text-center gap-3">
         <h3 className="font-bold text-3xl capitalize">{headerText}</h3>
         <h5 className="text-[#A3A3A3] capitalize">{headerCaption}</h5>
@@ -27,6 +32,7 @@ export const Search = ({ headerText, headerCaption }: ISearchProps) => {
           />
         }
         placeholder="Cari artikel"
+        onChange={onChange}
       />
     </div>
   );
