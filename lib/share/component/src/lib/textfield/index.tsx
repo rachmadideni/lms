@@ -5,7 +5,7 @@ import Image from 'next/image';
 interface ITextFieldProps {
   startAdornment: React.ReactNode;
   placeholder?: string;
-  onChange?: () => void;
+  onChange: (evt: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
 export const TextField = ({
