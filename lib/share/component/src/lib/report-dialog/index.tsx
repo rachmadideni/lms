@@ -13,7 +13,7 @@ interface ReportDialogProps {
 
 const Wrapper: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   return (
-    <div className="flex flex-col pl-2 py-4 w-[30%] rounded-xl align-bottom bg-white text-left overflow-hidden">
+    <div className="flex flex-col pl-2 py-4 z-[1000] md:w-[30%] rounded-xl align-bottom bg-white text-left overflow-auto">
       {children}
     </div>
   );
